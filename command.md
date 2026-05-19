@@ -67,13 +67,15 @@
 
 ### 权限数字对照
 
-| 数字 | 权限 | 说明 |
-|------|------|------|
-| 7 | `rwx` | 读+写+执行 |
-| 6 | `rw-` | 读+写 |
-| 5 | `r-x` | 读+执行 |
-| 4 | `r--` | 只读 |
-| 0 | `---` | 无权限 |
+权限数字是通过基础权限值相加得出的：`r(读)=4`, `w(写)=2`, `x(执行)=1`。
+
+| 数字 | 权限 | 说明 | 计算方式 |
+|------|------|------|----------|
+| 7 | `rwx` | 读+写+执行 | 4 + 2 + 1 |
+| 6 | `rw-` | 读+写 | 4 + 2 + 0 |
+| 5 | `r-x` | 读+执行 | 4 + 0 + 1 |
+| 4 | `r--` | 只读 | 4 + 0 + 0 |
+| 0 | `---` | 无权限 | 0 + 0 + 0 |
 
 ---
 
@@ -91,7 +93,8 @@
 ### sed — 流编辑器
 
     sed 's/old/new/g' file.txt       # 全局替换
-    sed -i 's/old/new/g' file.txt    # 直接修改文件
+    sed -i 's/old/new/g' file.txt    # 直接修改文件 (Linux)
+    sed -i '' 's/old/new/g' file.txt # 直接修改文件 (macOS 必加空字符串)
     sed '2d' file.txt                # 删除第2行
     sed -n '5,10p' file.txt          # 只打印5-10行
 
@@ -216,6 +219,7 @@
     -x  解压归档
     -z  通过 gzip 压缩/解压
     -j  通过 bzip2 压缩/解压
+    -J  通过 xz 压缩/解压 (注意是大写 J)
     -v  显示过程
     -f  指定文件名
     -C  指定解压目录
@@ -288,7 +292,7 @@
 | `alias` | 命令别名 | `alias ll='ls -alF'` |
 | `export` | 设置环境变量 | `export PATH=$PATH:/usr/local/bin` |
 | `env` | 查看环境变量 | `env` / `env | grep PATH` |
-| `crontab` | 定时任务 | `crontab -e` |
+| `crontab` | 定时任务 | `crontab -e` (格式: `分 时 日 月 周 命令`) |
 | `at` | 一次性定时任务 | `at now + 1 hour` |
 | `watch` | 定时执行并刷新显示 | `watch -n 1 'ps aux'` |
 | `xargs` | 参数传递 | `cat list.txt | xargs rm` |
@@ -327,12 +331,12 @@
 
 ## 15. 管道与重定向
 
-    command > file          # 标准输出覆盖写入文件
-    command >> file         # 标准输出追加写入文件
-    command 2> file         # 标准错误写入文件
-    command &> file         # 标准输出+错误写入文件
-    command1 | command2     # 管道：将 command1 的输出作为 command2 的输入
-    command < file          # 从文件读取输入
+    command > file           # 标准输出覆盖写入文件
+    command >> file          # 标准输出追加写入文件
+    command 2> file          # 标准错误写入文件
+    command &> file          # 标准输出+错误写入文件
+    command > /dev/null 2>&1 # 丢弃所有输出（写入黑洞）
+    command1 | command2      # 管道：将 command1 的输出作为 command2 的输入
+    command < file           # 从文件读取输入
 
 ---
-
